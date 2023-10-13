@@ -1,0 +1,121 @@
+<script>
+
+    function getOS() {
+
+            if (navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+                return 'MACOS'
+            }
+
+        if (navigator.platform.toUpperCase().indexOf('IPHONE') >= 0 ||
+            navigator.platform.toUpperCase().indexOf('IPAD') >= 0 ||
+            navigator.platform.toUpperCase().indexOf('IPOD') >= 0) {
+            return 'IOS'
+        }
+
+        if (navigator.platform.toUpperCase().indexOf('WIN') >= 0) {
+            return 'WINDOWS'
+        }
+
+        if (/android/i.test(navigator.userAgent)) {
+            return 'ANDROID';
+        }
+
+        return "UNKNOWN"
+    }
+
+
+    function checkLimits(visitLimit, visitCounter, lifetimeLimit, createdAt) {
+
+    if (visitLimit !== null && visitCounter !== null && visitCounter >= visitLimit && visitLimit !== 0) {
+        const limitExceededMsg = document.createElement('div');
+        limitExceededMsg.classList.add('limit-exceeded');
+        limitExceededMsg.textContent = 'Visit limit exceeded.\nRedirecting to main site soon.';
+        document.body.appendChild(limitExceededMsg);
+        setTimeout(() => {
+            window.location.href = window.location.origin;
+        }, 15000);
+    } else{
+        const createdAtDate = new Date(createdAt);
+        const lifetimeLimitSeconds = lifetimeLimit !== null && lifetimeLimit !== 0 ? lifetimeLimit : Infinity;
+        const lifetimeSeconds = (Date.now() - createdAtDate.getTime()) / 1000;
+        if (lifetimeSeconds > lifetimeLimitSeconds) {
+        const itemExpiredMsg = document.createElement('div');
+        itemExpiredMsg.classList.add('item-expired');
+        itemExpiredMsg.textContent = 'Item expired.\nRedirecting to main site soon.';
+        document.body.appendChild(itemExpiredMsg);
+        setTimeout(() => {
+            window.location.href = window.location.origin;
+        }, 15000);
+    }
+    }
+    
+
+    
+
+
+}
+</script>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://xdsmgyjuwrsmlvtwsjyu.supabase.co/storage/v1/object/public/Mind%20Bucket/mindar-image.prod.js?t=2023-10-09T11%3A46%3A46.856Z"></script>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://xdsmgyjuwrsmlvtwsjyu.supabase.co/storage/v1/object/public/Mind%20Bucket/mindar-image-aframe.prod.js?t=2023-10-09T11%3A47%3A18.307Z"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+     
+      const video = document.querySelector("#video");
+      const unmuteButton = document.querySelector("#unmuteButton");
+
+      
+      AFRAME.registerComponent('target_01', {
+        init: function () {
+          document.querySelector("#video").pause();
+          this.el.addEventListener('targetFound', event => {
+            document.querySelector("#video-view").setAttribute("src", "#video");
+            document.querySelector("#video").play();
+            
+            if (viewerOs == "ANDROID" || viewerOs == "WINDOWS") {
+              video.muted = false;
+            }
+          });
+          this.el.addEventListener('targetLost', event => {
+            document.querySelector("#video-view").setAttribute("src", "#video");
+            document.querySelector("#video").pause();
+            if (viewerOs == "ANDROID" || viewerOs == "WINDOWS") {
+              video.muted = true;
+            }
+          });
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <a-scene mindar-image="imageTargetSrc: https://xdsmgyjuwrsmlvtwsjyu.supabase.co/storage/v1/object/public/Mind%20Bucket/takemeback.mind?t=2023-10-13T08%3A43%3A55.747Z" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-assets>
+      <video id="video" autoplay loop crossorigin="anonymous" src="https://res.cloudinary.com/dzq7c0mxt/video/upload/v1697181924/videos/takemeback_cjuvxy.mp4" preload></video>
+    </a-assets>
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <a-entity id="target_01" target_01 mindar-image-target="targetIndex: 0">
+      <a-video id="video-view" width="1" height="1.3333" position="0 0 0"></a-video>
+    </a-entity>
+  </a-scene>
+      
+  <script>
+    const targetEntity = document.querySelector("#target_01");
+    const videoElement = document.querySelector("#video-view");
+     // Pause the video initially
+     
+    // Assuming you have code to detect the image target, e.g., using MindAR events
+    // When the target is detected, you can set the video element to be visible and play the video:
+    targetEntity.addEventListener("targetFound", () => {
+      videoElement.setAttribute("visible", "true");
+      videoElement.play();
+    });
+  </script>
+</body>
+</html>
